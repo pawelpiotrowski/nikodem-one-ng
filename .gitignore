@@ -39,6 +39,7 @@ testem.log
 
 # sync
 client_secret.json
+.secret/
 
 # System Files
 .DS_Store

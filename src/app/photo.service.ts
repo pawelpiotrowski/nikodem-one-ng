@@ -39,7 +39,7 @@ export class PhotoService {
             let _p = {
                 path: this.photosDir + photo.name,
                 date: this.parsePhotoMeta(photo),
-                label: null
+                label: ''
             };
             _p.label = moment(_p.date).format('YYYY-MM-DD HH:mm');
             p.push(_p);
