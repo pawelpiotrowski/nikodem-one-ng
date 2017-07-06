@@ -9,14 +9,19 @@ export class AppSync {
     }
     init(): void {
         Log.status(['Start app sync with config', [this.config]]);
-        GDrive.getFolderToSyncContent()
-        .then(folder => {
-            Log.success(['Get google drive folder to sync content: ', [folder]]);
+        GDrive.getFile({
+            id: '0B-3a-sPk_VpNaWtFMzJXX2pRbEk',
+            name: 'IMG_0442.JPG',
+            createdTime: '2017-04-17T18:35:19.484Z',
+            fileExtension: 'JPG'
+        })
+        .then(fileObj => {
+            Log.success(['Super: ', [fileObj]]);
             Log.status(['App sync finished OK']);
             process.exit(0);
         })
         .catch(err => {
-            Log.error(['Get google drive folder to sync content: ', [err]]);
+            Log.error(['Chujnia: ', [err]]);
             Log.status(['App sync failed ERROR']);
             process.exit(1);
         });

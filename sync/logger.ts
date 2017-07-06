@@ -24,6 +24,10 @@ class Logger {
         console.log('(``.)  ', chalk.grey('Info: ' + msg[0]), '\n');
         this.logInLoop(msg[1]);
     }
+    ok(msg: LogMsg): void {
+        console.log('(``-)_,  ', chalk.green('\u2714 OK: '), chalk.grey(msg[0]), '\n');
+        this.logInLoop(msg[1]);
+    }
     success(msg: LogMsg): void {
         console.log('\\_(``*)_/  ', chalk.green('Success: ' + msg[0]), '\n');
         this.logInLoop(msg[1]);
