@@ -1,13 +1,13 @@
 import fs = require('fs-extra');
-import Gauth = require('./gauth');
-import Log = require('./logger');
 import googleApi = require('googleapis');
+
+import Config = require('./config');
+import Log = require('./logger');
+import Gauth = require('./gauth');
 
 type PromiseSequence = Promise<any>;
 
 class GoogleDrive {
-    private filesTmpDir = __dirname + '/.tmpfiles/';
-    private folderToSync = 'Nikodem/web';
 
     private folderMimeType = 'mimeType="application/vnd.google-apps.folder"';
     private imageMimeType = 'mimeType contains "image/"';
@@ -88,7 +88,7 @@ class GoogleDrive {
 
     getFolderToSyncId(): Promise<any> {
         return new Promise((resolve, reject) => {
-            let splitFolderPath = this.folderToSync.split('/');
+            let splitFolderPath = Config.driveFolderToSync.split('/');
             this.getFolderIdByName(splitFolderPath[0])
             .then(folder => {
                 if(splitFolderPath.length === 1) {
@@ -119,10 +119,10 @@ class GoogleDrive {
     getFile(fileObj): Promise<any> {
         return new Promise((resolve, reject) => {
             Log.info(['Downloading file -> ' + fileObj.name]);
-            fs.ensureDir(this.filesTmpDir)
+            fs.ensureDir(Config.filesTmpDir)
             .then(() => { return Gauth.getAuth(); })
             .then(auth => {
-                let path = this.filesTmpDir + fileObj.name;
+                let path = Config.filesTmpDir + fileObj.name;
                 let dest = fs.createWriteStream(path);
                 this.drive.files.get({
                     auth: auth,
@@ -135,10 +135,10 @@ class GoogleDrive {
                     if(dest.bytesWritten > fileObj.size * 0.8) {
                         Log.ok(['File downloaded: ',[path]]);
                         resolve(file);
-                        return;
+                    } else {
+                        Log.warning(['File downloaded with errors: ',[path]]);
+                        reject(file);
                     }
-                    Log.warning(['File downloaded with errors: ',[path]]);
-                    reject(file);
                 })
                 .on('error', (err) => {
                     Log.warning(['File download error: ',[path]]);
@@ -151,19 +151,22 @@ class GoogleDrive {
     }
 
     getFiles(filesArr): Promise<any> {
-        return new Promise((resolve, reject) => {
-            /*
-            execute promises in sequence
-            https://stackoverflow.com/questions/24586110/resolve-promises-one-after-another-i-e-in-sequence
-            */
-            let sequence: PromiseSequence = Promise.resolve();
-            filesArr.forEach(fileObj => {
-                sequence = sequence.then(() => {
-                    return this.getFile(fileObj);
-                });
+        /*
+        execute promises in sequence
+        https://stackoverflow.com/questions/24586110/resolve-promises-one-after-another-i-e-in-sequence
+        */
+        let sequence = Promise.resolve();
+        filesArr.forEach(fileObj => {
+            sequence = sequence
+            .then(() => {
+                return this.getFile(fileObj);
+            })
+            .catch(err => {
+                Promise.reject(err);
+                throw err;
             });
-            return sequence;
         });
+        return sequence;
     }
 }
 

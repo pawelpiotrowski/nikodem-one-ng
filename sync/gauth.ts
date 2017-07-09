@@ -1,32 +1,26 @@
 import fs = require('fs-extra');
 import readline = require('readline');
 import GoogleAuthLib = require('google-auth-library');
+
+import Config = require('./config');
 import Log = require('./logger');
 
 class GoogleAuth {
-    private secretDir = __dirname + '/.secret/';
-
-    private clientIdFileName = 'client_id.json';
-    private clientIdPath = this.secretDir + this.clientIdFileName;
-
-    private clientTokenFileName = 'client_token.json';
-    private clientTokenPath = this.secretDir + this.clientTokenFileName;
-
     private authScopes = ['https://www.googleapis.com/auth/drive'];
 
     getClientIdFile(): Promise<any> {
-        return fs.readFile(this.clientIdPath, 'utf-8').then(JSON.parse);
+        return fs.readFile(Config.clientIdPath, 'utf-8').then(JSON.parse);
     }
 
     getClientTokenFile(): Promise<any> {
-        return fs.readFile(this.clientTokenPath, 'utf-8').then(JSON.parse);
+        return fs.readFile(Config.clientTokenPath, 'utf-8').then(JSON.parse);
     }
 
     setClientToken(token: {}): Promise<any> {
         return new Promise((resolve,reject) => {
-            fs.ensureFile(this.clientTokenPath)
+            fs.ensureFile(Config.clientTokenPath)
             .then(() => {
-                fs.writeFile(this.clientTokenPath, JSON.stringify(token))
+                fs.writeFile(Config.clientTokenPath, JSON.stringify(token))
                 .then(() => resolve())
                 .catch(err => reject(err));
             })
