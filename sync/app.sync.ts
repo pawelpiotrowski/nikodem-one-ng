@@ -5,21 +5,25 @@ import Sync = require('./sync');
 import Cleaner = require('./cleaner');
 
 export class AppSync {
-    private config: object;
+    private config;
 
     constructor(args: object) {
         this.config = args;
     }
 
-    init(): void {
+    async init(): Promise<void> {
         Log.status(['Start app sync with config', [this.config]]);
+        if(this.config.token) {
+            try {
+                await Cleaner.removeGoogleToken();
+            } catch(err) {
+                Log.error(['Error removing google token: ', [err]]);
+                throw err;
+            }
+        }
         Sync.start()
         .then(payload => {
-            Log.ok(['Sync done, cleaning up...']);
-            return Cleaner.run()
-        })
-        .then(() => {
-            Log.success(['Sync finished, temporary files deleted']);
+            Log.success(['Sync done!!']);
             process.exit(0);
         })
         .catch(err => {

@@ -53,24 +53,22 @@ class S3 {
     }
 
     removeFiles(files): Promise<any> {
-        return new Promise((resolve, reject) => {
-            /*
-            execute promises in sequence
-            https://stackoverflow.com/questions/24586110/resolve-promises-one-after-another-i-e-in-sequence
-            */
-            let sequence = Promise.resolve();
-            files.forEach(file => {
-                sequence = sequence
-                .then(() => {
-                    return this.removeFile(file);
-                })
-                .catch(err => {
-                    Promise.reject(err);
-                    throw err;
-                });
+        /*
+        execute promises in sequence
+        https://stackoverflow.com/questions/24586110/resolve-promises-one-after-another-i-e-in-sequence
+        */
+        let sequence = Promise.resolve();
+        files.forEach(file => {
+            sequence = sequence
+            .then(() => {
+                return this.removeFile(file);
+            })
+            .catch(err => {
+                Promise.reject(err);
+                throw err;
             });
-            return sequence;
-        })
+        });
+        return sequence;
     }
 
     getOutputFiles(): Promise<any> {
@@ -142,7 +140,7 @@ class S3 {
             .then(client => {
                 Log.info(['S3 updating data...']);
                 let stream = fs.createReadStream(Config.localListFilePath);
-                client.writeFile(Config.awsBucketDataFile, stream, { ContentType: 'application/json' },
+                client.writeFile(Config.awsBucketDataFile, stream, { ContentType: 'application/json', CacheControl: 'max-age=0' },
                 (err, e) => {
                     if(err) {
                         return reject(err);

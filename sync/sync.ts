@@ -2,6 +2,7 @@ import _ = require('lodash');
 import fs = require('fs-extra');
 import request = require('request');
 
+import Cleaner = require('./cleaner');
 import Config = require('./config');
 import Log = require('./logger');
 import Gdrive = require('./gdrive');
@@ -93,6 +94,7 @@ class Sync {
                 let payload = await Payload.make();
                 await this.setLocalList(payload);
                 await Payload.updateData();
+                await Cleaner.run();
             }
         } catch(err) {
             throw err;

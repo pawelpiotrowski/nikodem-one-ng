@@ -5,8 +5,13 @@ import Config = require('./config');
 import Log = require('./logger');
 
 class Cleaner {
+    removeGoogleToken(): Promise<void> {
+        return fs.remove(Config.clientTokenPath);
+    }
+
     async run(): Promise<void> {
         try {
+            Log.info(['Cleaning temporary files...']);
             await fs.emptyDir(Config.filesTmpDir);
             await fs.emptyDir(Config.outputTmpDir);
             const diffFile = path.parse(Config.syncDiffFilePath).name;

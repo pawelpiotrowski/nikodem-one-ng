@@ -1,6 +1,7 @@
 import fs = require('fs-extra');
 import readline = require('readline');
 import GoogleAuthLib = require('google-auth-library');
+import opn = require('opn');
 
 import Config = require('./config');
 import Log = require('./logger');
@@ -36,7 +37,7 @@ class GoogleAuth {
             });
 
             Log.alert(['Google Auth: authorize this app by visiting this url:', [authUrl]]);
-
+            opn(authUrl, {app: 'google chrome'});
             let rl = readline.createInterface({
                 input: process.stdin,
                 output: process.stdout
