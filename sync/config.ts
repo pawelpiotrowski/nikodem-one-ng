@@ -3,8 +3,8 @@ class Config {
     tmpDir = __dirname + '/.tmpfiles/';
     filesTmpDir = this.tmpDir + 'files/';
     outputTmpDir = this.tmpDir + 'output/';
-    clientIdFileName = 'client_id.json';
-    clientTokenFileName = 'client_token.json';
+    clientIdFileName = 'google_client_id.json';
+    clientTokenFileName = 'google_client_token.json';
     clientIdPath = this.secretDir + this.clientIdFileName;
     clientTokenPath = this.secretDir + this.clientTokenFileName;
     driveFolderToSync = 'Nikodem/web';
@@ -13,6 +13,11 @@ class Config {
     localListFilePath = this.tmpDir + this.localListFileName;
     syncDiffFileName = 'diff.json';
     syncDiffFilePath = this.tmpDir + 'diff.json';
+    awsUserFileName = 'aws_creds.json';
+    awsUserPath = this.secretDir + this.awsUserFileName;
+    awsBucketName = 'nikodem.one';
+    awsBucketPhotosDir = 'photos/';
+    awsBucketDataFile = 'photos.json';
 }
 
 export = new Config();

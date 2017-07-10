@@ -90,7 +90,9 @@ class Sync {
         try {
             let diffResult = await this.getDiff();
             if(diffResult.diff) {
-                await Payload.make();
+                let payload = await Payload.make();
+                await this.setLocalList(payload);
+                await Payload.updateData();
             }
         } catch(err) {
             throw err;

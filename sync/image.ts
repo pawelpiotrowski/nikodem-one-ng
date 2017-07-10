@@ -19,8 +19,10 @@ class Image {
                 .then(file => {
                     file.resize(1200, Jimp.AUTO)
                     .exifRotate()
-                    .write(outputPath, resolve)
-
+                    .write(outputPath, () => {
+                        Log.info(['Image processed: ', [outputPath]]);
+                        resolve();
+                    });
                 })
                 .catch(err => reject(err));
             })

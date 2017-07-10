@@ -4,34 +4,32 @@ import Config = require('./config');
 import Log = require('./logger');
 import Gdrive = require('./gdrive');
 import Image = require('./image');
+import S3 = require('./s3');
 
 class Payload {
 
-    updateLocalList(list): Promise<any> {
-        return fs.outputJSON(Config.localListFilePath, list);
-    }
-
-    removeFiles(files): Promise<any> {
-        return new Promise((resolve, reject) => {
-            resolve();
-        })
+    updateData(): Promise<any> {
+        return S3.updateData();
     }
 
     async make(): Promise<any> {
         Log.info(['Making payload...']);
+        let payload;
         try {
             const diff = await fs.readJSON(Config.syncDiffFilePath);
             if(diff.toAdd.length) {
                 await Gdrive.getFiles(diff.toAdd);
                 await Image.process();
+                await S3.addInputFiles();
             }
             if(diff.toDelete.length) {
-                await this.removeFiles(diff.toAdd);
+                await S3.removeFiles(diff.toDelete);
             }
-            await this.updateLocalList(diff.remote);
+            payload = diff.remote;
         } catch(err) {
             throw err;
         }
+        return payload;
     }
 }
 
