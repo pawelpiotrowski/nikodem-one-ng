@@ -32,10 +32,44 @@ class S3 {
         return client;
     }
 
+    removeFile(fileObj): Promise<any> {
+        return new Promise((resolve, reject) => {
+            this.getClient()
+            .then(client => {
+                Log.info(['S3 deleting: "' + fileObj.name + '"']);
+                let file = Config.awsBucketPhotosDir + fileObj.name;
+                client.unlink(file, (err, e) => {
+                    if(err) {
+                        return reject(err);
+                    }
+                    Log.ok(['S3 deleted: "' + file + '"']);
+                    resolve();
+                });
+            })
+            .catch(err => {
+                reject(err)
+            });
+        });
+    }
+
     removeFiles(files): Promise<any> {
         return new Promise((resolve, reject) => {
-            Log.info(['S3 removing files...',[files]]);
-            resolve();
+            /*
+            execute promises in sequence
+            https://stackoverflow.com/questions/24586110/resolve-promises-one-after-another-i-e-in-sequence
+            */
+            let sequence = Promise.resolve();
+            files.forEach(file => {
+                sequence = sequence
+                .then(() => {
+                    return this.removeFile(file);
+                })
+                .catch(err => {
+                    Promise.reject(err);
+                    throw err;
+                });
+            });
+            return sequence;
         })
     }
 

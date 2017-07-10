@@ -3,7 +3,6 @@ import * as minimist from 'minimist';
 import Log = require('./logger');
 import Sync = require('./sync');
 import Cleaner = require('./cleaner');
-import Payload = require('./payload');
 
 export class AppSync {
     private config: object;
@@ -16,11 +15,15 @@ export class AppSync {
         Log.status(['Start app sync with config', [this.config]]);
         Sync.start()
         .then(payload => {
-            Log.success(['cool', [payload]]);
+            Log.ok(['Sync done, cleaning up...']);
+            return Cleaner.run()
+        })
+        .then(() => {
+            Log.success(['Sync finished, temporary files deleted']);
             process.exit(0);
         })
         .catch(err => {
-            Log.error(['err', [err]]);
+            Log.error(['Sync error: ', [err]]);
             process.exit(1);
         });
     }
