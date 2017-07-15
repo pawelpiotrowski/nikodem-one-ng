@@ -36,6 +36,7 @@ class GoogleDrive {
                     fields: this.folderIdFields
                 }, (err, response) => {
                     if(err || !response.files.length) {
+                        Log.error(['Drive api error: err, response.files.length', [err, response]])
                         reject({ error: 'Error getting folder id by name for "' + name + '"' });
                         return;
                     }

@@ -5,6 +5,8 @@ class Config {
     outputTmpDir = this.tmpDir + 'output/';
     clientIdFileName = 'google_client_id.json';
     clientTokenFileName = 'google_client_token.json';
+    clientJWTFileName = 'nikodem-one-6d5d94ea8140.json';
+    clientJWTPath = this.secretDir + this.clientJWTFileName;
     clientIdPath = this.secretDir + this.clientIdFileName;
     clientTokenPath = this.secretDir + this.clientTokenFileName;
     driveFolderToSync = 'Nikodem/web';

@@ -5,9 +5,33 @@ import opn = require('opn');
 
 import Config = require('./config');
 import Log = require('./logger');
+import googleApi = require('googleapis');
+
+const apiKey = require(Config.clientJWTPath);
 
 class GoogleAuth {
     private authScopes = ['https://www.googleapis.com/auth/drive'];
+
+    getClientJWTFile(): Promise<any> {
+        return fs.readFile(Config.clientJWTPath, 'utf-8').then(JSON.parse);
+    }
+
+    getJWTClient(): Promise<any> {
+        return new Promise((resolve, reject) => {
+            let jwtClient = new googleApi.auth.JWT(
+                apiKey.client_email,
+                null,
+                apiKey.private_key,
+                this.authScopes
+            );
+            jwtClient.authorize((err, tokens) => {
+                if(err) {
+                    return reject(err);
+                }
+                resolve(jwtClient);
+            });
+        });
+    }
 
     getClientIdFile(): Promise<any> {
         return fs.readFile(Config.clientIdPath, 'utf-8').then(JSON.parse);
@@ -101,6 +125,7 @@ class GoogleAuth {
     // alias
     getAuth(): Promise<any> {
         return this.getOauth2Client();
+        //return this.getJWTClient();
     }
 }
 
