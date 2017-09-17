@@ -9,6 +9,7 @@ class Config {
     clientJWTPath = this.secretDir + this.clientJWTFileName;
     clientIdPath = this.secretDir + this.clientIdFileName;
     clientTokenPath = this.secretDir + this.clientTokenFileName;
+    googleProjectName = 'nikodem-one';
     driveFolderToSync = 'Nikodem/web';
     remoteListUrl = 'http://nikodem.one/photos.json';
     localListFileName = 'files.json';
@@ -20,6 +21,10 @@ class Config {
     awsBucketName = 'nikodem.one';
     awsBucketPhotosDir = 'photos/';
     awsBucketDataFile = 'photos.json';
+
+    testDir = this.tmpDir + 'test/';
+    testFilesFile = 'files-test.json';
+    testFiles = this.tmpDir + this.testFilesFile;
 }
 
 export = new Config();

@@ -3,6 +3,7 @@ import * as minimist from 'minimist';
 import Log = require('./logger');
 import Sync = require('./sync');
 import Cleaner = require('./cleaner');
+import GVision = require('./gvision');
 
 export class AppSync {
     private config;
@@ -22,6 +23,7 @@ export class AppSync {
             }
         }
         Sync.start()
+        //GVision.labelImages()
         .then(payload => {
             Log.success(['Sync done!!']);
             process.exit(0);
